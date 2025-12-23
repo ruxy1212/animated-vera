@@ -169,7 +169,9 @@ const goToStep = (targetStep: number) => {
   }
   // Step 1 -> 2: Scroll to section 2
   else if (currentStep.value === 1 && targetStep === 2) {
-    gsap.to(window, { scrollTo: window.innerHeight, duration: ANIMATION_DURATION, ease: CUSTOM_EASE });
+    const sectionEl = benefitsSectionRef.value?.$el as HTMLElement;
+    const scrollTarget = sectionEl ? sectionEl.offsetTop : window.innerHeight;
+    gsap.to(window, { scrollTo: scrollTarget, duration: ANIMATION_DURATION, ease: CUSTOM_EASE });
     if (secTwoCircle.value) {
       gsap.from(secTwoCircle.value, { rotate: 5, delay: 1, duration: 1, ease: CUSTOM_EASE });
     }
@@ -181,7 +183,9 @@ const goToStep = (targetStep: number) => {
   }
   // Step 2 -> 3: Scroll to section 3
   else if (currentStep.value === 2 && targetStep === 3) {
-    gsap.to(window, { scrollTo: window.innerHeight * 2, duration: ANIMATION_DURATION, ease: CUSTOM_EASE });
+    const sectionEl = showcaseRef.value?.$el as HTMLElement;
+    const scrollTarget = sectionEl ? sectionEl.offsetTop : window.innerHeight * 2;
+    gsap.to(window, { scrollTo: scrollTarget, duration: ANIMATION_DURATION, ease: CUSTOM_EASE });
     if (headerContentRef.value) {
       gsap.to(headerContentRef.value, { filter: 'brightness(0) invert(1)', delay: 0.75, duration: 0.75, ease: CUSTOM_EASE });
     }
@@ -196,8 +200,20 @@ const goToStep = (targetStep: number) => {
   }
   // Going backwards
   else if (targetStep < currentStep.value) {
-    const targetScroll = Math.max(0, (targetStep - 1) * window.innerHeight);
-    gsap.to(window, { scrollTo: targetScroll, duration: ANIMATION_DURATION, ease: CUSTOM_EASE });
+    // Calculate scroll target based on target step
+    let targetScroll = 0;
+    if (targetStep === 2) {
+      const sectionEl = benefitsSectionRef.value?.$el as HTMLElement;
+      targetScroll = sectionEl ? sectionEl.offsetTop : window.innerHeight;
+    } else if (targetStep === 1) {
+      const sectionEl = heroSectionRef.value?.$el as HTMLElement;
+      targetScroll = sectionEl ? sectionEl.offsetTop : 0;
+    }
+    // Step 1 -> 0 doesn't require scroll
+    
+    if (currentStep.value !== 1 || targetStep !== 0) {
+      gsap.to(window, { scrollTo: targetScroll, duration: ANIMATION_DURATION, ease: CUSTOM_EASE });
+    }
     
     if (currentStep.value === 3 && targetStep === 2 && headerContentRef.value) {
       gsap.to(headerContentRef.value, { filter: "none", delay: 0.25, duration: 0.85, ease: CUSTOM_EASE });
