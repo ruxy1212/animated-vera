@@ -1,7 +1,7 @@
 <template>
   <div class="section bg-white">
     <div class="grid md:grid-cols-2 h-screen w-screen overflow-hidden select-none">
-      <div class="flex flex-col justify-center items-end px-6 py-12 relative z-10 gap-7" ref="itemsContainer">
+      <div class="flex flex-col justify-center items-end px-6 pb-32 md:py-12 relative z-10 gap-7" ref="itemsContainer">
         <div 
           v-for="(item, index) in benefits" 
           :key="index"
