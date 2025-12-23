@@ -26,7 +26,7 @@
         <div class="w-full h-full relative z-1 top-1/3 overflow-hidden" ref="heroText">
           <AutoScale text="NOURISH"/>
         </div>
-        <div class="absolute left-1/2 top-[47%] md:top-[52%] -translate-x-1/2 -translate-y-1/2 z-10 w-full max-w-7xl">
+        <div class="absolute left-1/2 top-[47%] md:top-[52%] -translate-x-1/2 -translate-y-1/2 z-10 w-full max-w-7xl select-none">
           <div ref="ingredientsRef" class="opacity-0">
             <div class="flex justify-between gap-10">
               <div class="flex justify-center items-center flex-col max-w-60">
@@ -64,7 +64,7 @@
         <div class="absolute rounded-full w-1/4 aspect-square bg-white shadow-[0px_0px_65px_33px] shadow-white opacity-50"></div>
       </div>
       <div class="section bg-white">
-        <div class="grid md:grid-cols-2 h-screen w-screen overflow-hidden">
+        <div class="grid md:grid-cols-2 h-screen w-screen overflow-hidden select-none">
           <div class="flex flex-col justify-center items-end px-6 py-12 relative z-10 gap-7" ref="secTwoContainer">
             <div 
               v-for="(item, index) in secTwo" 
@@ -93,11 +93,11 @@
           </div>
         </div>
       </div>
-      <div class="relative section h-screen w-screen bg-cover bg-bottom bg-no-repeat" :style="{ backgroundImage: `url(${bgImage})` }">
+      <div class="relative section h-screen bg-cover bg-bottom bg-no-repeat" :style="{ backgroundImage: `url(${bgImage})` }">
         <div class="absolute top-0 left-0 w-full h-[60vh] pointer-events-none"
             style="background: radial-gradient(ellipse 150% 150% at top center, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%);">
         </div>
-        <div class="w-full h-full flex flex-col text-center items-center relative z-10 p-8 pt-36 md:pt-24 2xl:pt-32 text-white" ref="secThreeContent">
+        <div class="w-full h-full flex flex-col text-center items-center relative z-10 p-8 pt-36 md:pt-24 2xl:pt-32 text-white select-none" ref="secThreeContent">
           <h2 class="font-didot font-bold text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-7xl mb-4">VERA SKIN NOURISH</h2>
           <p class="text-sm md:text-base xl:text-lg 2xl:text-xl mb-4">Simple cosmetic jar mockup, it can be downloaded</p>
           <button class="px-6 md:px-8 lg:px-10 xl:px-14 2xl:px-20 py-2.5 md:py-3.5 lg:py-4 xl:py-5 2xl:py-8 bg-white text-black text-lg xl:text-xl font-bold">Buy Now</button>
@@ -304,7 +304,7 @@
         gsap.set(el, {
           x: 0,
           y: 0,
-          scale: 0.5,
+          scale: 0.3,
           opacity: 0
         })
 
@@ -444,7 +444,7 @@
         }, 0)
 
         tl.to(el, {
-          scale: 0.5,
+          scale: 0.3,
           duration: 0.8,
           ease: "power3.out"
         }, 0)
@@ -498,6 +498,7 @@
   // Handle wheel events
   let wheelTimeout: ReturnType<typeof setTimeout> | undefined;
   const handleWheel = (e: WheelEvent) => {
+    e.preventDefault();
     if (!interactionEnabled.value || isAnimating.value) return;
     
     clearTimeout(wheelTimeout);
@@ -518,7 +519,24 @@
     }
   };
 
-  const handleScroll = () => {
+  // Touch handling
+  let touchStartY = 0;
+  const handleTouchStart = (e: TouchEvent) => {
+    touchStartY = e.touches[0]?.clientY || 0;
+  };
+
+  const handleTouchEnd = (e: TouchEvent) => {
+    if (!interactionEnabled.value || isAnimating.value) return;
+    const touchEndY = e.changedTouches[0]?.clientY || 0;
+    const deltaY = touchStartY - touchEndY;
+    if (Math.abs(deltaY) > 30) {
+      if (deltaY > 0) goToStep(currentStep.value + 1);
+      else goToStep(currentStep.value - 1);
+    }
+  };
+
+  const handleScroll = (e: Event) => {
+    e.preventDefault();
     if (!splashComplete.value) {
       window.scrollTo(0, 0);
     }
@@ -529,7 +547,10 @@
     if (floatingCap.value) observer.observe(floatingCap.value);
     window.addEventListener('wheel', handleWheel, { passive: false });
     document.addEventListener('keydown', handleKeydown);
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: false });
+    document.addEventListener('touchstart', handleTouchStart, { passive: true });
+    document.addEventListener('touchend', handleTouchEnd, { passive: true });
+    document.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
 
     animateFloatingElement(0);
     playSplashScreen();
@@ -540,5 +561,7 @@
     window.removeEventListener('wheel', handleWheel);
     document.removeEventListener('keydown', handleKeydown);
     window.removeEventListener('scroll', handleScroll);
+    document.removeEventListener('touchstart', handleTouchStart);
+    document.removeEventListener('touchend', handleTouchEnd);
   });
 </script>
