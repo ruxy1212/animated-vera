@@ -147,7 +147,7 @@ const animateIngredientsOut = () => {
     }
   }, 0);
   tl.to(el, { scale: 0.3, duration: 0.8, ease: "power3.out" }, 0);
-  tl.to(el, { opacity: 0, duration: 0.4, ease: "power2.in" }, 0.8);
+  tl.to(el, { opacity: 0, duration: 0.4, ease: "power2.in" }, 0.4);
 };
 
 // Step navigation

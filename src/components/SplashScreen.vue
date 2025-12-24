@@ -1,16 +1,16 @@
 <template>
   <div 
-    class="fixed top-0 left-1/2 -translate-x-1/2 flex justify-center items-end h-screen" 
+    class="fixed top-0 left-1/2 -translate-x-1/2 flex justify-center items-end h-screen z-50" 
     ref="splashContainer"
   >
     <img 
       src="@/assets/images/plant-left.png" 
-      class="h-screen object-cover" 
+      class="h-screen object-cover object-right -mr-[10%]" 
       ref="imageLeft" 
     />
     <img 
       src="@/assets/images/plant-right.png" 
-      class="h-screen object-cover" 
+      class="h-screen object-cover object-left" 
       ref="imageRight" 
     />
   </div>
@@ -48,7 +48,8 @@ const play = () => {
   });
 
   gsap.to(imageLeft.value, {
-    rotation: -100,
+    rotation: -8,
+    x: -80,
     transformOrigin: "bottom right",
     duration: SPLASH_DURATION,
     delay: SPLASH_DELAY,
@@ -56,7 +57,8 @@ const play = () => {
   });
 
   gsap.to(imageRight.value, {
-    rotation: 100,
+    rotation: 8,
+    x: 80,
     transformOrigin: "bottom left",
     duration: SPLASH_DURATION,
     delay: SPLASH_DELAY,
