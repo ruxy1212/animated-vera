@@ -14,7 +14,11 @@
     <div 
       v-if="!imagesLoaded" 
       class="fixed inset-0 z-100 bg-av-light-green backdrop-blur-md transition-opacity duration-500"
-    ></div>
+    >
+      <div class="w-full h-full relative z-1 top-1/3 overflow-hidden" ref="heroTextEl">
+        <AutoScale text="NOURISH"/>
+      </div>
+    </div>
 
     <!-- Splash Screen -->
     <SplashScreen ref="splashRef" @complete="onSplashComplete" />
@@ -32,6 +36,7 @@ import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import AppHeader from '@/components/layout/AppHeader.vue';
 import SplashScreen from '@/components/SplashScreen.vue';
 import FloatingProduct from '@/components/ui/FloatingProduct.vue';
+import AutoScale from '@/components/texts/AutoScale.vue';
 import { HeroSection, BenefitsSection, ProductShowcase } from '@/components/sections';
 
 // Composables
