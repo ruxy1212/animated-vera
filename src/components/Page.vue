@@ -11,14 +11,19 @@
     </div>
 
     <!-- Blur overlay while images load -->
-    <div 
-      v-if="!imagesLoaded" 
-      class="fixed inset-0 z-100 bg-av-light-green backdrop-blur-md transition-opacity duration-500"
+    <Transition
+      leave-active-class="transition duration-500 ease-in"
+      leave-to-class="opacity-0"
     >
-      <div class="w-full h-full relative z-1 top-1/3 overflow-hidden" ref="heroTextEl">
-        <AutoScale text="NOURISH"/>
+      <div 
+        v-if="!imagesLoaded" 
+        class="fixed inset-0 z-100 bg-av-light-green backdrop-blur-md"
+      >
+        <div class="w-full h-full relative z-1 top-1/3 overflow-hidden" ref="heroTextEl">
+          <AutoScale text="NOURISH"/>
+        </div>
       </div>
-    </div>
+    </Transition>
 
     <!-- Splash Screen -->
     <SplashScreen ref="splashRef" @complete="onSplashComplete" />
