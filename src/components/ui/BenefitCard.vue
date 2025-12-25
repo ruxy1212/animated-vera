@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center gap-1.5">
+  <div :class="['flex items-center', isReversed ? 'flex-row-reverse' : 'cvfc', 'gap-1.5']">
     <img 
       :alt="title" 
       :src="image" 
@@ -21,5 +21,6 @@ defineProps<{
   image: string;
   title: string;
   description: string;
+  isReversed?: boolean;
 }>();
 </script>

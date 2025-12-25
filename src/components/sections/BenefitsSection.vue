@@ -8,7 +8,7 @@
           ref="benefitItems"
           class="will-change-transform duration-300"
         >
-          <BenefitCard v-bind="item" />
+          <BenefitCard v-bind="item" :is-reversed="index % 2 !== 0" />
         </div>
       </div>
       

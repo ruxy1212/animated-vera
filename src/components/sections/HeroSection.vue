@@ -4,7 +4,7 @@
       <AutoScale text="NOURISH"/>
     </div>
     <div class="absolute left-1/2 top-[47%] md:top-[52%] -translate-x-1/2 -translate-y-1/2 z-10 w-full max-w-7xl select-none">
-      <div ref="ingredientsContainer" class="opacity-0">
+      <div ref="ingredientsContainer" class="opacity-0 lg:px-8">
         <div class="flex justify-between gap-10">
           <IngredientCard 
             v-for="ingredient in topIngredients" 
