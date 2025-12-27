@@ -36,6 +36,7 @@
 import { onMounted, onUnmounted, ref, watch } from 'vue';
 import { gsap } from 'gsap';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
+import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 
 // Components
 import AppHeader from '@/components/layout/AppHeader.vue';
@@ -53,7 +54,7 @@ import { floatingPositions } from '@/data/positions';
 import { CUSTOM_EASE, ANIMATION_DURATION } from '@/data/constants';
 
 // Register GSAP plugins
-gsap.registerPlugin(ScrollToPlugin);
+gsap.registerPlugin(ScrollToPlugin, MotionPathPlugin);
 
 // Device detection
 const isMobile = typeof window !== 'undefined' && window.innerWidth < 600;
@@ -109,59 +110,120 @@ const animateFloatingElement = (targetStep: number) => {
 };
 
 // Ingredients animation helpers
+const animateIngredientItem = (el: Element, delay: number, isIn: boolean) => {
+  const container = ingredientsRef.value;
+  if (!container) return;
+
+  const containerRect = container.getBoundingClientRect();
+  const elRect = el.getBoundingClientRect();
+  
+  // Center of the container (screen center)
+  const centerX = containerRect.width / 2;
+  const centerY = containerRect.height / 2;
+  
+  // Element's natural position relative to container
+  const elCenterX = elRect.left - containerRect.left + elRect.width / 2;
+  const elCenterY = elRect.top - containerRect.top + elRect.height / 2;
+  
+  // Offset from center to element's position (this is what we animate FROM on entry)
+  const offsetX = centerX - elCenterX;
+  const offsetY = centerY - elCenterY;
+  
+  // Direction vector from center to element's final position (normalized)
+  const distance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
+  const dirX = -offsetX / distance;
+  const dirY = -offsetY / distance;
+  
+  // Perpendicular vector (rotated 90° counterclockwise for anticlockwise arc)
+  // For anticlockwise: perpendicular is (-dirY, dirX)
+  const perpX = -dirY;
+  const perpY = dirX;
+  
+  // Arc offset amount
+  const arcAmount = distance * 0.3;
+  
+  // Midpoint along the path, offset perpendicular for arc curve
+  const midX = offsetX * 0.5 + perpX * arcAmount;
+  const midY = offsetY * 0.5 + perpY * arcAmount;
+
+  if (isIn) {
+    // Start at center, animate to natural position with anticlockwise arc
+    gsap.set(el, { x: offsetX, y: offsetY, scale: 0.3, opacity: 0 });
+    const tl = gsap.timeline({ delay });
+    tl.to(el, { 
+      x: 0, 
+      y: 0, 
+      duration: 0.8, 
+      ease: "power2.out",
+      motionPath: {
+        path: [
+          { x: offsetX, y: offsetY },
+          { x: midX, y: midY },
+          { x: 0, y: 0 }
+        ],
+        curviness: 1.5
+      }
+    }, 0);
+    tl.to(el, { scale: 1, duration: 0.8, ease: "power3.out" }, 0);
+    tl.to(el, { opacity: 1, duration: 0.4, ease: "power2.out" }, 0);
+  } else {
+    // Start at natural position, animate back to center with clockwise arc
+    gsap.set(el, { x: 0, y: 0, scale: 1, opacity: 1 });
+    const tl = gsap.timeline({ delay });
+    tl.to(el, { 
+      x: offsetX, 
+      y: offsetY, 
+      duration: 0.8, 
+      ease: "power2.in",
+      motionPath: {
+        path: [
+          { x: 0, y: 0 },
+          { x: midX, y: midY },
+          { x: offsetX, y: offsetY }
+        ],
+        curviness: 1.5
+      }
+    }, 0);
+    tl.to(el, { scale: 0.3, duration: 0.8, ease: "power3.out" }, 0);
+    tl.to(el, { opacity: 0, duration: 0.4, ease: "power2.in" }, 0.4);
+  }
+};
+
 const animateIngredientsIn = () => {
   if (!ingredientsRef.value) return;
   
-  const el = ingredientsRef.value;
-  const radius = 50;
-  const center = { x: -radius, y: 0 };
-  const motion = { angle: 0 };
+  gsap.set(ingredientsRef.value, { opacity: 1 });
+  let items = ingredientsRef.value.querySelectorAll(':scope > div > div');
 
-  gsap.set(el, { x: 0, y: 0, scale: 0.3, opacity: 0 });
+  const order = [0, 2, 4, 3, 1];
+  order.forEach((i, n) => {
+    const item = items[i];
+    if (!item) return;
 
-  const tl = gsap.timeline();
-  tl.to(motion, {
-    angle: 360,
-    delay: 0.8,
-    duration: 0.8,
-    ease: "none",
-    onUpdate() {
-      const rad = (motion.angle * Math.PI) / 180;
-      gsap.set(el, {
-        x: center.x + radius * Math.cos(rad),
-        y: center.y + radius * Math.sin(rad)
-      });
-    }
-  }, 0);
-  tl.to(el, { scale: 1, delay: 0.8, duration: 0.8, ease: "power3.out" }, 0);
-  tl.to(el, { opacity: 1, delay: 0.8, duration: 0.4, ease: "power2.out" }, 0);
+    // your logic here
+    animateIngredientItem(item, 0.8 + n * 0.5, true);
+  });
+  // items.forEach((item, index) => {
+  //   animateIngredientItem(item, 0.8 + index * 0.5, true);
+  // });
 };
 
 const animateIngredientsOut = () => {
   if (!ingredientsRef.value) return;
   
-  const el = ingredientsRef.value;
-  const radius = 50;
-  const center = { x: -radius, y: 0 };
-  const motion = { angle: 0 };
+  const items = Array.from(ingredientsRef.value.querySelectorAll(':scope > div > div'));
+  // const reversed = items.reverse();
+  // reversed.forEach((item, index) => {
+  //   animateIngredientItem(item, index * 0.5, false);
+  // });
+  const order = [1, 3, 4, 2, 0];
+  order.forEach((i, n) => {
+    const item = items[i];
+    if (!item) return;
 
-  gsap.set(el, { x: 0, y: 0, scale: 1, opacity: 1 });
-
-  const tl = gsap.timeline();
-  tl.to(motion, {
-    angle: -360,
-    duration: 0.8,
-    ease: "none",
-    onUpdate() {
-      const rad = (motion.angle * Math.PI) / 180;
-      gsap.set(el, {
-        x: center.x + radius * Math.cos(rad),
-        y: center.y + radius * Math.sin(rad)
-      });
-    }
-  }, 0);
-  tl.to(el, { scale: 0.3, duration: 0.8, ease: "power3.out" }, 0);
-  tl.to(el, { opacity: 0, duration: 0.4, ease: "power2.in" }, 0.4);
+    // your logic here
+    animateIngredientItem(item, n * 0.5, false);
+  });
 };
 
 // Step navigation
