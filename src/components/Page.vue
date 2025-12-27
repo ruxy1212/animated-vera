@@ -1,5 +1,20 @@
 <template>
   <main>
+    <!-- Blur overlay while images load -->
+    <Transition
+      leave-active-class="transition duration-200 ease-in"
+      leave-to-class="opacity-0"
+    >
+      <div 
+        v-if="!unscrambleIsComplete" 
+        class="fixed inset-0 z-100 bg-av-light-green backdrop-blur-md"
+      >
+        <div class="w-full h-full relative z-1 top-1/3 overflow-hidden" ref="heroTextEl">
+          <Unscramble :stop-trigger="imagesLoaded" target-text="VERA SKIN NOURISH" v-model:unscramble-complete="unscrambleIsComplete" />
+        </div>
+      </div>
+    </Transition>
+    
     <!-- Header -->
     <AppHeader ref="headerRef" />
 
@@ -10,21 +25,6 @@
       <ProductShowcase ref="showcaseRef" />
     </div>
 
-    <!-- Blur overlay while images load -->
-    <Transition
-      leave-active-class="transition duration-500 ease-in"
-      leave-to-class="opacity-0"
-    >
-      <div 
-        v-if="!imagesLoaded" 
-        class="fixed inset-0 z-100 bg-av-light-green backdrop-blur-md"
-      >
-        <div class="w-full h-full relative z-1 top-1/3 overflow-hidden" ref="heroTextEl">
-          <AutoScale text="NOURISH"/>
-        </div>
-      </div>
-    </Transition>
-
     <!-- Splash Screen -->
     <SplashScreen ref="splashRef" @complete="onSplashComplete" />
 
@@ -33,15 +33,16 @@
   </main>
 </template>
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import { gsap } from 'gsap';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 
 // Components
 import AppHeader from '@/components/layout/AppHeader.vue';
 import SplashScreen from '@/components/SplashScreen.vue';
+import Unscramble from '@/components/Unscramble.vue';
 import FloatingProduct from '@/components/ui/FloatingProduct.vue';
-import AutoScale from '@/components/texts/AutoScale.vue';
+// import AutoScale from '@/components/texts/AutoScale.vue';
 import { HeroSection, BenefitsSection, ProductShowcase } from '@/components/sections';
 
 // Composables
@@ -71,6 +72,9 @@ const headerContentRef = ref<HTMLElement | null>(null);
 const ingredientsRef = ref<HTMLElement | null>(null);
 const secTwoCircle = ref<HTMLElement | null>(null);
 const secThreeContent = ref<HTMLElement | null>(null);
+
+// Unscramble state
+const unscrambleIsComplete = ref(false);
 
 // Composables
 const { imagesLoaded, loadAllImages } = useImagePreloader();
@@ -314,9 +318,15 @@ onMounted(async () => {
   // Initial position
   animateFloatingElement(0);
   
-  // Load images and start splash
+  // Load images
   await loadAllImages();
-  playSplash();
+});
+
+// Watch for unscramble completion to start splash animation
+watch(unscrambleIsComplete, (isComplete) => {
+  if (isComplete) {
+    playSplash();
+  }
 });
 
 onUnmounted(() => {
