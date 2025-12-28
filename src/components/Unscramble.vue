@@ -19,12 +19,13 @@ const props = defineProps({
 });
 
 const SHUFFLE_SPEED = 50;
-const SHUFFLE_DURATION = 4000;
+const SHUFFLE_DURATION = 2000;
 const UNSCRAMBLE_DURATION = 3000;
 // ========================
 
 const displayText = ref('');
 const isUnscrambling = ref(false);
+const displayEl = ref(null);
 let shuffleInterval = null;
 let unscrambleInterval = null;
 
@@ -96,6 +97,7 @@ const triggerUnscramble = () => {
       displayText.value = props.targetText;
       clearInterval(unscrambleInterval);
       unscrambleInterval = null;
+      displayEl.value.style.opacity = '0.08';
       setTimeout(() => {
         emit('update:unscrambleComplete', true);
       }, UNSCRAMBLE_DURATION);
@@ -138,7 +140,7 @@ onUnmounted(() => {
 
 <template>
   <div class="flex items-center justify-center p-8">
-    <div class="text-5xl font-didot font-bold tracking-wider max-w-min text-center wrap-break-word [word-spacing:100vw]">
+    <div ref="displayEl" class="text-5xl font-didot font-bold tracking-wider max-w-min text-center wrap-break-word [word-spacing:100vw] transition-opacity duration-500 ease-in-out">
       {{ displayText }}
     </div>
   </div>

@@ -111,6 +111,7 @@ const animateFloatingElement = (targetStep: number) => {
 
 // Ingredients animation helpers
 const animateIngredientItem = (el: Element, delay: number, isIn: boolean) => {
+  gsap.set(el, { clearProps: "x,y" });
   const container = ingredientsRef.value;
   if (!container) return;
 
@@ -153,7 +154,7 @@ const animateIngredientItem = (el: Element, delay: number, isIn: boolean) => {
     tl.to(el, { 
       x: 0, 
       y: 0, 
-      duration: 0.8, 
+      duration: 0.5, 
       ease: "power2.out",
       motionPath: {
         path: [
@@ -164,8 +165,8 @@ const animateIngredientItem = (el: Element, delay: number, isIn: boolean) => {
         curviness: 1.5
       }
     }, 0);
-    tl.to(el, { scale: 1, duration: 0.8, ease: "power3.out" }, 0);
-    tl.to(el, { opacity: 1, duration: 0.4, ease: "power2.out" }, 0);
+    tl.to(el, { scale: 1, duration: 0.5, ease: "power3.out" }, 0);
+    tl.to(el, { opacity: 1, duration: 0.25, ease: "power2.out" }, 0);
   } else {
     // Start at natural position, animate back to center with clockwise arc
     gsap.set(el, { x: 0, y: 0, scale: 1, opacity: 1 });
@@ -173,7 +174,7 @@ const animateIngredientItem = (el: Element, delay: number, isIn: boolean) => {
     tl.to(el, { 
       x: offsetX, 
       y: offsetY, 
-      duration: 0.8, 
+      duration: 0.5, 
       ease: "power2.in",
       motionPath: {
         path: [
@@ -184,8 +185,8 @@ const animateIngredientItem = (el: Element, delay: number, isIn: boolean) => {
         curviness: 1.5
       }
     }, 0);
-    tl.to(el, { scale: 0.3, duration: 0.8, ease: "power3.out" }, 0);
-    tl.to(el, { opacity: 0, duration: 0.4, ease: "power2.in" }, 0.4);
+    tl.to(el, { scale: 0.3, duration: 0.5, ease: "power3.out" }, 0);
+    tl.to(el, { opacity: 0, duration: 0.25, ease: "power2.in" }, 0.25);
   }
 };
 
@@ -200,29 +201,19 @@ const animateIngredientsIn = () => {
     const item = items[i];
     if (!item) return;
 
-    // your logic here
-    animateIngredientItem(item, 0.8 + n * 0.5, true);
+    animateIngredientItem(item, 0.5 + n * 0.125, true);
   });
-  // items.forEach((item, index) => {
-  //   animateIngredientItem(item, 0.8 + index * 0.5, true);
-  // });
 };
 
 const animateIngredientsOut = () => {
   if (!ingredientsRef.value) return;
   
   const items = Array.from(ingredientsRef.value.querySelectorAll(':scope > div > div'));
-  // const reversed = items.reverse();
-  // reversed.forEach((item, index) => {
-  //   animateIngredientItem(item, index * 0.5, false);
-  // });
   const order = [1, 3, 4, 2, 0];
   order.forEach((i, n) => {
     const item = items[i];
     if (!item) return;
-
-    // your logic here
-    animateIngredientItem(item, n * 0.5, false);
+    animateIngredientItem(item, n * 0.125, false);
   });
 };
 
