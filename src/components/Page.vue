@@ -224,17 +224,19 @@ const animateSecTwoItemsIn = () => {
   
   // Start from y: 20, opacity: 0 with an arc motion
   gsap.fromTo(secTwoItemsContainer.value, 
-    { y: 20, opacity: 0.4 },
+    { y: 0, opacity: 0 },
     { 
-      y: 0, 
-      opacity: 1, 
-      duration: 1.0, 
+      y: 0,
+      opacity: 1,
+      duration: 2.0, 
       delay: 0.5,
       ease: "power2.out",
       motionPath: {
         path: [
-          { x: 0, y: 20 },
-          { x: -15, y: 10 },
+          { x: 0, y: 0 },
+          { x: 15, y: 20 },
+          { x: 0, y: 40 },
+          { x: -15, y: 20 },
           { x: 0, y: 0 }
         ],
         curviness: 1.2
