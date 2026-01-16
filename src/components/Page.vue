@@ -234,9 +234,9 @@ const animateSecTwoItemsIn = () => {
       motionPath: {
         path: [
           { x: 0, y: 0 },
-          { x: 15, y: 20 },
+          { x: 5, y: 20 },
           { x: 0, y: 40 },
-          { x: -15, y: 20 },
+          { x: -5, y: 20 },
           { x: 0, y: 0 }
         ],
         curviness: 1.2
