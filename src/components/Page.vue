@@ -72,6 +72,7 @@ const floatingEl = ref<HTMLElement | null>(null);
 const headerContentRef = ref<HTMLElement | null>(null);
 const ingredientsRef = ref<HTMLElement | null>(null);
 const secTwoCircle = ref<HTMLElement | null>(null);
+const secTwoItemsContainer = ref<HTMLElement | null>(null);
 const secThreeContent = ref<HTMLElement | null>(null);
 
 // Unscramble state
@@ -217,6 +218,31 @@ const animateIngredientsOut = () => {
   });
 };
 
+// Animate section 2 items container with arc motion
+const animateSecTwoItemsIn = () => {
+  if (!secTwoItemsContainer.value) return;
+  
+  // Start from y: 20, opacity: 0 with an arc motion
+  gsap.fromTo(secTwoItemsContainer.value, 
+    { y: 20, opacity: 0.4 },
+    { 
+      y: 0, 
+      opacity: 1, 
+      duration: 1.0, 
+      delay: 0.5,
+      ease: "power2.out",
+      motionPath: {
+        path: [
+          { x: 0, y: 20 },
+          { x: -15, y: 10 },
+          { x: 0, y: 0 }
+        ],
+        curviness: 1.2
+      }
+    }
+  );
+};
+
 // Step navigation
 const goToStep = (targetStep: number) => {
   if (!interactionEnabled.value || isAnimating.value || targetStep === currentStep.value || targetStep < 0 || targetStep >= floatingPositions.length) {
@@ -242,6 +268,7 @@ const goToStep = (targetStep: number) => {
     if (secTwoCircle.value) {
       gsap.from(secTwoCircle.value, { rotate: 5, delay: 1, duration: 1, ease: CUSTOM_EASE });
     }
+    animateSecTwoItemsIn();
     animateFloatingElement(2);
     setTimeout(() => {
       currentStep.value = 2;
@@ -287,6 +314,7 @@ const goToStep = (targetStep: number) => {
       if (secTwoCircle.value) {
         gsap.from(secTwoCircle.value, { rotate: 5, delay: 1, duration: 1, ease: CUSTOM_EASE });
       }
+      animateSecTwoItemsIn();
     }
     
     if (currentStep.value === 1 && targetStep === 0) {
@@ -360,6 +388,9 @@ onMounted(async () => {
   }
   if (benefitsSectionRef.value?.circleEl) {
     secTwoCircle.value = benefitsSectionRef.value.circleEl;
+  }
+  if (benefitsSectionRef.value?.itemsContainer) {
+    secTwoItemsContainer.value = benefitsSectionRef.value.itemsContainer;
   }
   if (showcaseRef.value?.contentEl) {
     secThreeContent.value = showcaseRef.value.contentEl;
