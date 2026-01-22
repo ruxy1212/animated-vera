@@ -21,7 +21,7 @@
           <img 
             ref="handImage"
             class="absolute right-0 bottom-0 scale-125 -translate-[8%]" 
-            src="@/assets/images/hand.png" 
+            src="@/assets/images/hand.webp" 
           />
         </div>
       </div>

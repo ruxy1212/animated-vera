@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import bgImage from '@/assets/images/podium.png';
+import bgImage from '@/assets/images/podium.webp';
 
 const contentEl = ref<HTMLDivElement | null>(null);
 

@@ -4,12 +4,12 @@
     ref="splashContainer"
   >
     <img 
-      src="@/assets/images/plant-left.png" 
+      src="@/assets/images/plant-left.webp" 
       class="h-screen object-cover object-right -mr-[10%]" 
       ref="imageLeft" 
     />
     <img 
-      src="@/assets/images/plant-right.png" 
+      src="@/assets/images/plant-right.webp" 
       class="h-screen object-cover object-left" 
       ref="imageRight" 
     />

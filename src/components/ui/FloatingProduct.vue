@@ -1,13 +1,13 @@
 <template>
   <div class="floating-element w-1/2 max-w-100 2xl:max-w-125 z-50" ref="container">
     <img 
-      src="@/assets/images/cap.png" 
+      src="@/assets/images/cap.webp" 
       class="relative w-full z-1" 
       ref="capEl"
       :style="{ marginBottom: negativeMargin }" 
     />
     <img 
-      src="@/assets/images/no-cap.png" 
+      src="@/assets/images/no-cap.webp" 
       class="w-full" 
       ref="mainEl" 
     />

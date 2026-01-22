@@ -20,7 +20,8 @@ const props = defineProps({
 
 const SHUFFLE_SPEED = 50;
 const SHUFFLE_DURATION = 2000;
-const UNSCRAMBLE_DURATION = 3000;
+const UNSCRAMBLE_DURATION = 2000;
+const FADE_DURATION = 1000;
 // ========================
 
 const displayText = ref('');
@@ -99,7 +100,10 @@ const triggerUnscramble = () => {
       unscrambleInterval = null;
       displayEl.value.style.opacity = '0.08';
       setTimeout(() => {
-        emit('update:unscrambleComplete', true);
+        displayEl.value.style.opacity = '0';
+        setTimeout(() => {
+          emit('update:unscrambleComplete', true);
+        }, FADE_DURATION);
       }, UNSCRAMBLE_DURATION);
     }
   }, SHUFFLE_SPEED);
