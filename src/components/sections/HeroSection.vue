@@ -12,7 +12,7 @@
             v-bind="ingredient"
           />
         </div>
-        <div class="flex justify-between pt-[30%] md:pt-[50%] lg:pt-10 px-[5%] gap-10">
+        <div class="flex justify-between pt-[min(30%,150px)] lg:pt-10 px-[5%] gap-10">
           <IngredientCard 
             v-for="ingredient in middleIngredients" 
             :key="ingredient.title"

@@ -8,10 +8,15 @@
         <li class="opacity-60">Blog</li>
       </ul>
       <div 
-        class="static font-didot text-2xl md:text-3xl 2xl:text-5xl md:absolute top-1/2 md:-translate-y-1/2 left-1/2 md:-translate-x-1/2" 
+        class="static font-didot text-2xl md:text-3xl 2xl:text-5xl md:absolute top-1/2 md:-translate-y-1/2 left-1/2 md:-translate-x-1/2 grid grid-cols-1 grid-rows-1" 
         ref="titleEl"
       >
-        VERA
+        <h1 class="col-start-1 row-start-1">
+          VERA
+        </h1>
+        <h1 ref="titleBold" class="col-start-1 row-start-1 font-bold opacity-0">
+          VERA
+        </h1>
       </div>
       <div class="hidden md:flex gap-5 font-inter text-xs md:text-sm lg:text-base 2xl:text-xl font-medium">
         <div class="flex gap-5">
@@ -34,9 +39,11 @@ import Cart from '@/components/icons/Cart.vue';
 
 const headerContent = ref<HTMLDivElement | null>(null);
 const titleEl = ref<HTMLDivElement | null>(null);
+const titleBold = ref<HTMLHeadingElement | null>(null);
 
 defineExpose({
   headerContent,
-  titleEl
+  titleEl,
+  titleBold
 });
 </script>

@@ -56,9 +56,6 @@ import { CUSTOM_EASE, ANIMATION_DURATION } from '@/data/constants';
 // Register GSAP plugins
 gsap.registerPlugin(ScrollToPlugin, MotionPathPlugin);
 
-// Device detection
-const isMobile = typeof window !== 'undefined' && window.innerWidth < 600;
-
 // Component refs
 const headerRef = ref<InstanceType<typeof AppHeader> | null>(null);
 const heroSectionRef = ref<InstanceType<typeof HeroSection> | null>(null);
@@ -74,6 +71,7 @@ const ingredientsRef = ref<HTMLElement | null>(null);
 const secTwoCircle = ref<HTMLElement | null>(null);
 const secTwoItemsContainer = ref<HTMLElement | null>(null);
 const secThreeContent = ref<HTMLElement | null>(null);
+const handImageRef = ref<HTMLImageElement | null>(null);
 
 // Unscramble state
 const unscrambleIsComplete = ref(false);
@@ -94,8 +92,41 @@ const animateFloatingElement = (targetStep: number) => {
   const pos = floatingPositions[targetStep];
   if (!pos) return;
   
-  const nTop = isMobile && targetStep === 2 ? '21%' : typeof pos.top === 'string' ? pos.top : `${pos.top}%`;
-  const nLeft = isMobile && targetStep === 2 ? '42%' : typeof pos.left === 'string' ? pos.left : `${pos.left}%`;
+  // For step 2, position based on handImage
+  if (targetStep === 2 && handImageRef.value && benefitsSectionRef.value?.$el) {
+    const sectionEl = benefitsSectionRef.value.$el as HTMLElement;
+    const sectionRect = sectionEl.getBoundingClientRect();
+    const handRect = handImageRef.value.getBoundingClientRect();
+    const floatingRect = floatingEl.value.getBoundingClientRect();
+    
+    // Calculate handImage position relative to its section
+    const handRelativeTop = handRect.top - sectionRect.top;
+    const handRelativeLeft = handRect.left - sectionRect.left;
+    
+    // Calculate the center of handImage relative to its section
+    const handCenterX = handRelativeLeft + handRect.width / 2;
+    const handCenterY = handRelativeTop + handRect.height / 2;
+    
+    const scaledHeight = floatingRect.height * pos.scale;
+    const targetTop = handCenterY - scaledHeight / 2;
+    const targetLeft = handCenterX;
+    
+    gsap.to(floatingEl.value, {
+      top: targetTop + 5,
+      left: targetLeft,
+      xPercent: -50,
+      yPercent: -50,
+      rotation: pos.rotation,
+      opacity: pos.opacity,
+      scale: pos.scale,
+      duration: ANIMATION_DURATION,
+      ease: CUSTOM_EASE
+    });
+    return;
+  }
+  
+  const nTop = typeof pos.top === 'string' ? pos.top : `${pos.top}%`;
+  const nLeft = typeof pos.left === 'string' ? pos.left : `${pos.left}%`;
   
   gsap.to(floatingEl.value, {
     top: nTop,
@@ -364,8 +395,13 @@ const playSplash = () => {
   splashRef.value.play();
   
   // Animate header title
-  if (headerRef.value.titleEl) {
-    gsap.to(headerRef.value.titleEl, { fontWeight: 700, delay: 2, duration: 1.0 });
+  if (headerRef.value.titleBold) {
+    gsap.to(headerRef.value.titleBold, { 
+      opacity: 1, 
+      delay: 2, 
+      duration: 1.0,
+      ease: "power2.inOut" 
+    });
   }
   
   // Fade hero text
@@ -393,6 +429,9 @@ onMounted(async () => {
   }
   if (benefitsSectionRef.value?.itemsContainer) {
     secTwoItemsContainer.value = benefitsSectionRef.value.itemsContainer;
+  }
+  if (benefitsSectionRef.value?.handImage) {
+    handImageRef.value = benefitsSectionRef.value.handImage;
   }
   if (showcaseRef.value?.contentEl) {
     secThreeContent.value = showcaseRef.value.contentEl;

@@ -19,6 +19,7 @@
           class="relative w-full aspect-square bg-av-light-green rounded-full"
         >
           <img 
+            ref="handImage"
             class="absolute right-0 bottom-0 scale-125 -translate-[8%]" 
             src="@/assets/images/hand.png" 
           />
@@ -37,6 +38,7 @@ import { benefits } from '@/data/benefits';
 const itemsContainer = ref<HTMLDivElement | null>(null);
 const benefitItems = ref<HTMLDivElement[] | null>(null);
 const circleEl = ref<HTMLDivElement | null>(null);
+const handImage = ref<HTMLImageElement | null>(null);
 
 const isMobile = typeof window !== 'undefined' && window.innerWidth < 600;
 
@@ -70,6 +72,7 @@ defineExpose({
   itemsContainer,
   benefitItems,
   circleEl,
+  handImage,
   calculateItemPositions
 });
 </script>
